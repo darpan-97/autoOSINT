@@ -28,19 +28,19 @@ if [ ! -d "$screenshot_path" ];then
 fi
 
 echo "${RED} [+] Checkin' who it is...${RESET}"
-whois $1 > $info_path/whois.txt
+whois $1 > $info_path/whois.txt 2>&1
 
 echo "${RED} [+] Launching subfinder...${RESET}"
-subfinder -d $domain > $subdomain_path/found.txt 
+subfinder -d $domain > $subdomain_path/found.txt 2>&1
 
 echo "${RED} [+] Running assetfinder...${RESET}"
-assetfinder $domain | grep $domain >> $subdomain_path/found.txt 
+assetfinder $domain | grep $domain >> $subdomain_path/found.txt 2>&1
 
 echo "${RED} [+] Running Amass. This could take a while...${RESET}"
-amass enum -d $domain >> $subdomain_path/found.txt 
+amass enum -d $domain >> $subdomain_path/found.txt
 
 echo "${RED} [+] Checking what's alive...${RESET}"
-cat $subdomain_path/found.txt | grep $domain | sort -u | httprobe -s -p https:443 | grep https | sed 's/https\?:\/\///' | tee -a $subdomain_path/alive.txt 
+cat $subdomain_path/found.txt | grep $domain | sort -u | httprobe -s -p https:443 | grep https | sed 's/https\?:\/\///' | tee -a $subdomain_path/alive.txt
 
 echo "${RED} [+] Taking dem screenshotz...${RESET}"
-gowitness file -f $subdomain_path/alive.txt -P $screenshot_path/ --no-http 
+gowitness file -f $subdomain_path/alive.txt -P $screenshot_path/ --no-http
